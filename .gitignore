@@ -1,0 +1,16 @@
+# Ignorar base de datos local
+db.sqlite3
+
+# Ignorar carpeta de entorno virtual (pesa mucho y no sirve en la nube)
+venv/
+env/
+
+# Ignorar archivos compilados de Python
+__pycache__/
+*.pyc
+
+# Ignorar carpeta de estáticos recolectados (se creará sola en la nube)
+staticfiles/
+
+# Ignorar variables de entorno locales (si tuvieras)
+.env

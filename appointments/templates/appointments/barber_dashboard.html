@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Barbero</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body { background-color: #121212; color: #e0e0e0; font-family: 'Poppins', sans-serif; padding-bottom: 80px; }
+        
+        .dashboard-header { background-color: #1e1e1e; padding: 20px; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+        
+        .stat-card { background-color: #252525; border-radius: 12px; padding: 15px; text-align: center; border: 1px solid #333; }
+        .stat-num { font-size: 1.5rem; font-weight: 700; color: white; }
+        .stat-label { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+
+        .client-card { background-color: #1e1e1e; border-radius: 15px; margin-bottom: 20px; border: 1px solid #333; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        
+        .status-strip { height: 5px; width: 100%; }
+        .status-strip.pending { background-color: #d4af37; } 
+        .status-strip.completed { background-color: #28a745; } 
+        .status-strip.noshow { background-color: #dc3545; }
+
+        .card-content { padding: 20px; display: flex; align-items: center; justify-content: space-between; }
+        .time-badge { background-color: #2c2c2c; padding: 10px 12px; border-radius: 10px; text-align: center; min-width: 80px; border: 1px solid #444; }
+        .time-text { font-size: 1.2rem; font-weight: 700; color: #d4af37; display: block; line-height: 1; }
+        .am-pm { font-size: 0.75rem; color: #bbb; font-weight: 600; }
+
+        .client-info { flex-grow: 1; padding-left: 20px; }
+        .client-name { font-size: 1.1rem; font-weight: 600; color: white; margin-bottom: 4px; }
+        .client-phone { font-size: 0.9rem; color: #aaa; display: flex; align-items: center; gap: 5px; }
+        .nickname-tag { background-color: #333; color: #aaa; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; margin-left: 5px; vertical-align: middle; }
+
+        /* --- GRID --- */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; 
+            border-top: 1px solid #333;
+            width: 100%;
+        }
+
+        .action-btn {
+            background: none; border: none; padding: 15px 5px;
+            color: #ccc; font-weight: 500; font-size: 0.85rem;
+            text-decoration: none; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 5px;
+            transition: 0.2s; border-right: 1px solid #333;
+            width: 100%;
+        }
+        .action-btn:last-child { border-right: none; }
+        
+        .btn-whatsapp { color: #25D366; }
+        .btn-whatsapp:hover { background-color: rgba(37, 211, 102, 0.1); }
+        
+        .btn-success-custom { color: #28a745; }
+        .btn-success-custom:hover { background-color: rgba(40, 167, 69, 0.1); color: #28a745; }
+
+        .btn-noshow { color: #ef5350; }
+        .btn-noshow:hover { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+        
+        .action-icon { font-size: 1.2rem; margin-bottom: 2px; }
+
+        /* Texto claro para fechas */
+        .date-display { font-size: 0.9rem; color: #b0b0b0; letter-spacing: 0.5px; margin-top: 2px; }
+        .section-title { font-size: 0.85rem; color: #d4af37; font-weight: 700; letter-spacing: 1px; margin-bottom: 15px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-header d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-0 fw-bold text-white">Hola, Jefe <i class="bi bi-emoji-sunglasses text-warning"></i></h4>
+            <div class="date-display">{{ today|date:"l d F"|upper }}</div> 
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'barber_settings' %}" class="btn btn-outline-warning btn-sm rounded-circle p-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-gear-fill"></i>
+            </a>
+            <a href="{% url 'barber_logout' %}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 d-flex align-items-center">
+                Salir
+            </a>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        
+        <div class="row g-3 mb-4">
+            <div class="col-6">
+                <div class="stat-card">
+                    <div class="stat-num text-warning">{{ pending_count }}</div>
+                    <div class="stat-label">Pendientes</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="stat-card">
+                    <div class="stat-num">{{ total_count }}</div>
+                    <div class="stat-label">Total Citas</div>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-dark border-secondary d-flex align-items-center mb-4 small" role="alert">
+                <i class="bi bi-info-circle-fill me-2 text-warning"></i>
+                <div>{{ message }}</div>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if appointments %}
+            <h6 class="section-title">Agenda del Día</h6>
+            
+            {% for app in appointments %}
+            <div class="client-card">
+                <div class="status-strip 
+                    {% if app.status == 'PENDING' %}pending
+                    {% elif app.status == 'COMPLETED' %}completed
+                    {% elif app.status == 'NOSHOW' %}noshow{% endif %}">
+                </div>
+
+                <div class="card-content">
+                    <div class="time-badge">
+                        <span class="time-text">{{ app.time|time:"h:i" }}</span>
+                        <span class="am-pm">{{ app.time|time:"A" }}</span>
+                    </div>
+                    
+                    <div class="client-info">
+                        <div class="client-name">
+                            {% if app.client.nickname %}
+                                {{ app.client.nickname }}
+                                <span class="nickname-tag">{{ app.client.first_name }}</span>
+                            {% else %}
+                                {{ app.client.first_name }} {{ app.client.last_name }}
+                            {% endif %}
+                        </div>
+                        <div class="client-phone">
+                            <i class="bi bi-telephone text-secondary" style="font-size: 0.8rem;"></i> 
+                            {{ app.client.phone_number }}
+                        </div>
+                    </div>
+                </div>
+
+                {% if app.status == 'PENDING' %}
+                
+                <div class="action-grid">
+                    <a href="https://wa.me/{{ app.client.phone_number|cut:' '|cut:'+' }}" target="_blank" class="action-btn btn-whatsapp">
+                        <i class="bi bi-whatsapp action-icon"></i>
+                        <span>Chat</span>
+                    </a>
+                    
+                    <button type="button" class="action-btn btn-success-custom" onclick="confirmComplete('{{ app.id }}', '{{ app.client.first_name }}')">
+                        <i class="bi bi-check-circle-fill action-icon"></i>
+                        <span>Atendido</span>
+                    </button>
+
+                    <button type="button" class="action-btn btn-noshow" onclick="confirmNoShow('{{ app.id }}', '{{ app.client.first_name }}')">
+                        <i class="bi bi-x-circle-fill action-icon"></i>
+                        <span>No Vino</span>
+                    </button>
+                </div>
+
+                <form id="form-complete-{{ app.id }}" action="{% url 'mark_completed' app.id %}" method="POST" style="display:none;">
+                    {% csrf_token %}
+                </form>
+                <form id="form-noshow-{{ app.id }}" action="{% url 'mark_noshow' app.id %}" method="POST" style="display:none;">
+                    {% csrf_token %}
+                </form>
+                
+                {% elif app.status == 'COMPLETED' %}
+                    <div class="p-3 text-center text-success bg-success bg-opacity-10 small fw-bold border-top border-secondary border-opacity-25">
+                        <i class="bi bi-check-all me-1"></i> CORTE FINALIZADO
+                    </div>
+                {% elif app.status == 'NOSHOW' %}
+                    <div class="p-3 text-center text-danger bg-danger bg-opacity-10 small fw-bold border-top border-secondary border-opacity-25">
+                        <i class="bi bi-slash-circle me-1"></i> CLIENTE NO ASISTIÓ
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+        {% else %}
+            <div class="text-center py-5" style="color: #e0e0e0; opacity: 0.8;">
+                <i class="bi bi-calendar-check" style="font-size: 4rem; color: #6c757d;"></i>
+                <h5 class="mt-3 fw-bold">Todo limpio por hoy</h5>
+                <p class="small text-secondary">No hay citas pendientes ni activas.</p>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        function confirmComplete(appId, name) {
+            Swal.fire({
+                title: '¿Terminaste con ' + name + '?',
+                text: "Se marcará como completado.",
+                icon: 'question',
+                background: '#252525',
+                color: '#fff',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#555',
+                confirmButtonText: 'Sí, Atendido',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('form-complete-' + appId).submit();
+                }
+            })
+        }
+
+        function confirmNoShow(appId, name) {
+            Swal.fire({
+                title: '¿' + name + ' no llegó?',
+                text: "Esto quedará registrado como falta.",
+                icon: 'warning',
+                background: '#252525',
+                color: '#fff',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#555',
+                confirmButtonText: 'Sí, marcar falta',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('form-noshow-' + appId).submit();
+                }
+            })
+        }
+        setTimeout(function(){ window.location.reload(1); }, 300000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva tu Cita | Silver Back</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header-section {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 50px 0 80px 0; 
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            margin-bottom: -40px; 
+            position: relative;
+            z-index: 1;
+        }
+
+        .services-strip {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        .service-item { display: flex; align-items: center; gap: 8px; }
+
+        /* BOTONES MIS CITAS */
+        .btn-my-appointments-pc {
+            position: absolute; 
+            top: 20px; 
+            right: 20px;
+            z-index: 10;
+        }
+
+        .btn-my-appointments-mobile {
+            display: none;
+            margin-top: 15px;
+        }
+
+        /* DISEÑO TARJETAS (PC) */
+        .day-card {
+            border: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+            text-align: center;
+            display: flex; flex-direction: column; justify-content: center; 
+            min-height: 340px; padding: 30px 15px; z-index: 2; 
+        }
+        
+        .day-card:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+
+        .card-body { display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
+
+        /* ESTADOS DE TARJETA */
+        .day-active { border-top: 8px solid #28a745; } 
+        .day-closed { border-top: 8px solid #dc3545; background-color: #fff5f5; opacity: 0.9; cursor: not-allowed; }
+        .day-finished { border-top: 8px solid #6c757d; background-color: #f8f9fa; opacity: 0.8; cursor: not-allowed; filter: grayscale(100%); }
+        .day-soldout { border-top: 8px solid #fd7e14; background-color: #fff8f0; opacity: 0.95; cursor: not-allowed; }
+
+        .date-display { font-size: 4.5rem; font-weight: 700; line-height: 1; color: #333; margin: 15px 0; }
+        .month-display { text-transform: uppercase; letter-spacing: 3px; font-size: 1rem; color: #888; margin-bottom: 25px;}
+        
+        .status-badge { font-size: 0.9rem; padding: 10px 20px; border-radius: 50px; display: inline-block; width: 100%; }
+        .btn-select { border-radius: 50px; font-weight: 600; width: 100%; padding: 12px; font-size: 1.1rem; }
+
+        /* NUEVO: Botón AGOTADO */
+        .btn-sold-out {
+            background-color: #fd7e14; color: white; border: none; padding: 12px; 
+            border-radius: 50px; font-weight: 600; width: 100%; cursor: not-allowed;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+
+        /* Modal PC */
+        .section-header {
+            background-color: #e9ecef; color: #495057; padding: 8px 15px;
+            border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.5px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
+        }
+        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
+        .btn-time {
+            border-radius: 8px; font-size: 0.9rem; padding: 10px 0; transition: all 0.2s;
+            border: 1px solid #dee2e6; color: #212529; background-color: white;
+            text-decoration: none; display: block; text-align: center;
+        }
+        .btn-time:hover {
+            background-color: #0d6efd; border-color: #0d6efd; color: white;
+            transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* FOOTER */
+        footer {
+            margin-top: auto; background-color: #212529; color: #adb5bd; padding: 40px 0 20px; text-align: center;
+        }
+        .footer-link { color: white; text-decoration: none; margin: 0 10px; font-size: 1.2rem; transition: 0.3s; }
+        .footer-link:hover { color: #0d6efd; transform: scale(1.1); display: inline-block; }
+
+
+        /* =========================================
+           DISEÑO MÓVIL
+           ========================================= */
+        @media (max-width: 991px) { 
+            
+            .header-section { padding: 40px 0 60px 0; margin-bottom: -30px; }
+            .col-mobile-fix { width: 100% !important; flex: 0 0 100%; max-width: 100%; }
+
+            .btn-my-appointments-pc { display: none; }
+            .btn-my-appointments-mobile {
+                display: inline-block; 
+                background-color: rgba(255,255,255,0.2);
+                border: 1px solid rgba(255,255,255,0.4);
+                color: white;
+                padding: 8px 20px;
+                border-radius: 50px;
+                font-size: 0.9rem;
+                backdrop-filter: blur(5px);
+            }
+
+            .day-card {
+                display: flex !important; flex-direction: row !important; align-items: center !important;
+                justify-content: space-between !important; text-align: left !important;
+                padding: 25px 25px !important; min-height: 110px !important; height: auto !important;
+                border-radius: 15px; border: 1px solid rgba(0,0,0,0.05);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: none !important; margin-bottom: 15px;
+            }
+
+            .card-body { flex-direction: row !important; padding: 0; }
+            .day-active { border-left: 8px solid #28a745; } 
+            .day-closed { border-left: 8px solid #dc3545; } 
+            .day-finished { border-left: 8px solid #6c757d; }
+            .day-soldout { border-left: 8px solid #fd7e14; }
+
+            .date-display { font-size: 2.2rem; margin: 0; } 
+            .month-display { margin: 0; font-size: 0.9rem; font-weight: 600; }
+            .btn-select, .btn-sold-out { width: auto !important; padding: 10px 25px; font-size: 1rem; } 
+            .time-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .btn-time { padding: 12px 0; font-size: 1rem; }
+            
+            .services-strip { flex-direction: column; gap: 5px; margin-top: 20px; align-items: center; } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-section text-center">
+    <div class="container position-relative">
+        
+        <div class="btn-my-appointments-pc">
+            <a href="{% url 'my_appointments' %}" class="btn btn-sm btn-outline-light rounded-pill border-0 bg-white bg-opacity-10 shadow-sm" style="backdrop-filter: blur(5px);">
+                <i class="bi bi-calendar-check me-1"></i> Mis Citas
+            </a>
+        </div>
+
+        <h1 class="fw-bold mt-3"><i class="bi bi-scissors"></i> Silver Back <i class="bi bi-scissors"></i></h1>
+        <p class="lead mb-0 text-white-50">Reserva tu estilo en segundos</p>
+        
+        <div class="btn-my-appointments-mobile">
+            <a href="{% url 'my_appointments' %}" class="text-white text-decoration-none">
+                <i class="bi bi-calendar-check me-1"></i> Ver Mis Citas
+            </a>
+        </div>
+
+        <div class="services-strip">
+            <div class="service-item"><i class="bi bi-check2-circle"></i> Cortes Clásicos</div>
+            <div class="service-item"><i class="bi bi-check2-circle"></i> Barba & Estilos Únicos</div>
+            <div class="service-item"><i class="bi bi-check2-circle"></i> Ambiente Premium</div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row justify-content-center g-4">
+        
+        {% for day in days_list %}
+        <div class="col-lg col-md-4 col-sm-6 col-mobile-fix">
+            
+            <div class="card h-100 day-card 
+                {% if day.status == 'DISPONIBLE' %}day-active
+                {% elif day.status == 'TERMINADO' %}day-finished
+                {% elif day.status == 'AGOTADO' %}day-soldout
+                {% else %}day-closed{% endif %}">
+                
+                <div class="card-body">
+                    
+                    <div class="date-group">
+                        <h6 class="text-uppercase text-muted mb-1 d-none d-lg-block" style="font-size: 0.9rem;">{{ day.day_name }}</h6> 
+                        <span class="day-name-display d-block d-lg-none text-muted text-uppercase small mb-1">{{ day.day_name }}</span> 
+                        
+                        <div class="date-display">{{ day.date|date:"d" }}</div>
+                        <div class="month-display">{{ day.date|date:"F" }}</div>
+                    </div>
+
+                    <div class="action-group">
+                        
+                        {% if day.status == 'DISPONIBLE' %}
+                            <span class="badge bg-success bg-opacity-10 text-success status-badge mb-3 d-none d-lg-inline-block">
+                                <i class="bi bi-check-circle-fill me-1"></i> Disponible
+                            </span>
+                            <button class="btn btn-primary btn-sm btn-select shadow-sm" 
+                                    onclick="loadHours('{{ day.date|date:'Y-m-d' }}')">
+                                <span class="d-none d-lg-inline">Ver Horarios</span>
+                                <span class="d-inline d-lg-none">Ver</span>
+                            </button>
+
+                        {% elif day.status == 'AGOTADO' %}
+                            <span class="badge bg-warning bg-opacity-10 text-warning status-badge mb-3 d-none d-lg-inline-block">
+                                Cupos Llenos
+                            </span>
+                            <div class="btn-sold-out shadow-sm">
+                                <i class="bi bi-exclamation-circle-fill d-none d-lg-inline"></i> 
+                                <span class="d-none d-lg-inline">Agotado</span>
+                                <span class="d-inline d-lg-none">Lleno</span>
+                            </div>
+
+                        {% elif day.status == 'TERMINADO' %}
+                            <span class="badge bg-secondary status-badge mb-3 d-none d-lg-inline-block">
+                                <i class="bi bi-moon-stars-fill me-1"></i> Finalizado
+                            </span>
+                            
+                            <div class="d-none d-lg-flex flex-column align-items-center justify-content-center h-100 mt-2">
+                                <i class="bi bi-moon-stars-fill text-secondary mb-2" style="font-size: 1.5rem;"></i>
+                                <p class="small text-muted mb-0 fw-bold">Hasta mañana</p>
+                            </div>
+
+                            <div class="d-lg-none text-center" style="min-width: 80px;">
+                                <i class="bi bi-moon-stars-fill text-secondary d-block mb-1" style="font-size: 1.2rem;"></i>
+                                <p class="small text-muted fw-bold mb-0">Finalizado</p>
+                            </div>
+
+                        {% else %} 
+                            <span class="badge bg-danger bg-opacity-10 text-danger status-badge mb-3 d-none d-lg-inline-block">Cerrado</span>
+                            
+                            <div class="text-center d-lg-none" style="min-width: 80px;"> 
+                                <p class="small text-danger fw-bold mb-0">Cerrado</p>
+                                {% if day.note %}
+                                    <div class="text-muted" style="font-size: 0.9rem; margin-top: 2px;">{{ day.note }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-none d-lg-block">
+                                {% if day.note %}
+                                    <p class="text-danger mb-0" style="font-weight: 500;">{{ day.note }}</p>
+                                {% else %}
+                                    <p class="small text-muted mb-0">
+                                        <i class="bi bi-slash-circle me-1"></i> Descanso
+                                    </p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="mb-3">
+            <a href="https://wa.me/50375597543?text=Hola%20Silver%20Back,%20tengo%20una%20duda%20sobre%20la%20reserva." class="footer-link" target="_blank">
+               <i class="bi bi-whatsapp"></i>
+            </a>
+            
+            <a href="#" class="footer-link" onclick="showInstagramAlert(event)">
+                <i class="bi bi-instagram"></i>
+            </a>
+            
+            <a href="https://maps.app.goo.gl/szozNsdAuTsk8UXt7?g_st=ic" class="footer-link" target="_blank">
+                <i class="bi bi-geo-alt-fill"></i>
+            </a>
+        </div>
+        <p class="small mb-0">© 2026 Silver Back Peluquería.</p>
+        <p class="small text-white-50" style="font-size: 0.75rem;">Tu mejor versión empieza aquí.</p>
+    </div>
+</footer>
+
+<div class="modal fade" id="hoursModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Horarios Disponibles</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="text-center text-muted mb-4">Selecciona una hora para el <span id="modalDateDisplay" class="fw-bold text-dark"></span>:</p>
+        <div id="mainHoursContainer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function loadHours(dateStr) {
+        const modalElement = document.getElementById('hoursModal');
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+        const parts = dateStr.split('-'); 
+        const latamDate = `${parts[2]}-${parts[1]}-${parts[0]}`; 
+        document.getElementById('modalDateDisplay').innerText = latamDate;
+        
+        const container = document.getElementById('mainHoursContainer');
+        container.innerHTML = '<div class="text-center w-100 py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Buscando espacios...</p></div>';
+
+        fetch(`/get-hours/?date=${dateStr}`)
+            .then(response => response.json())
+            .then(data => {
+                container.innerHTML = ''; 
+                const totalSlots = data.morning.length + data.noon.length + data.afternoon.length + data.evening.length;
+                
+                if (totalSlots === 0) {
+                    container.innerHTML = '<div class="text-center py-4"><i class="bi bi-calendar-x text-muted" style="font-size: 2rem;"></i><p class="mt-2 text-muted">No hay horarios disponibles.</p></div>';
+                    return;
+                }
+
+                function createSection(title, icon, slots) {
+                    if (slots.length === 0) return '';
+                    let buttonsHtml = '';
+                    slots.forEach(time => {
+                        const bookingUrl = `/book/${dateStr}/${time}/`;
+                        buttonsHtml += `<a href="${bookingUrl}" class="btn btn-time">${time}</a>`;
+                    });
+                    return `<div><div class="section-header"><i class="bi ${icon}"></i> ${title}</div><div class="time-grid">${buttonsHtml}</div></div>`;
+                }
+
+                let fullHtml = '';
+                fullHtml += createSection('Mañana', 'bi-sunrise', data.morning);
+                fullHtml += createSection('Mediodía', 'bi-sun-fill', data.noon);
+                fullHtml += createSection('Tarde', 'bi-sunset-fill', data.afternoon);
+                fullHtml += createSection('Noche', 'bi-moon-stars-fill', data.evening);
+                container.innerHTML = fullHtml;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                container.innerHTML = '<p class="text-danger text-center">Ocurrió un error. Intenta de nuevo.</p>';
+            });
+    }
+
+    // --- NUEVO: FUNCIÓN PARA LA ALERTA DE INSTAGRAM ---
+    function showInstagramAlert(event) {
+        event.preventDefault(); // Evita que la página salte
+        Swal.fire({
+            title: '¡Muy pronto!',
+            text: 'Estamos trabajando en nuestro Instagram para que veas los mejores cortes. 📸',
+            icon: 'info',
+            confirmButtonColor: '#d4af37',
+            confirmButtonText: '¡Estaré atento!'
+        });
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
