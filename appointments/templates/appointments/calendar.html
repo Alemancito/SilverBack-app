@@ -85,7 +85,6 @@
         .status-badge { font-size: 0.9rem; padding: 10px 20px; border-radius: 50px; display: inline-block; width: 100%; }
         .btn-select { border-radius: 50px; font-weight: 600; width: 100%; padding: 12px; font-size: 1.1rem; }
 
-        /* NUEVO: Botón AGOTADO */
         .btn-sold-out {
             background-color: #fd7e14; color: white; border: none; padding: 12px; 
             border-radius: 50px; font-weight: 600; width: 100%; cursor: not-allowed;
@@ -297,7 +296,7 @@
             </a>
         </div>
         
-        <p class="mb-0">&copy; 2026 SilverBack Peluquería. Todos los derechos reservados.</p>
+        <p class="mb-0">© 2026 SilverBack Peluquería. Todos los derechos reservados.</p>
         <p class="small text-white-50" style="font-size: 0.75rem;">Tu mejor versión empieza aquí.</p>
 
 
@@ -330,6 +329,27 @@
 </div>
 
 <script>
+    // --- LÓGICA PARA CAPTURAR MENSAJES DE REDIRECCIÓN ---
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if messages %}
+            {% for message in messages %}
+                if ("{{ message }}" === "ALGUIEN_FUE_MAS_RAPIDO") {
+                    Swal.fire({
+                        title: '¡Ups! Alguien fue más rápido ⚡',
+                        text: 'Ese horario se acaba de reservar hace unos instantes mientras llenabas tus datos. Por favor, selecciona otro espacio disponible.',
+                        icon: 'warning',
+                        confirmButtonColor: '#d4af37',
+                        confirmButtonText: 'Entendido',
+                        background: '#ffffff',
+                        customClass: {
+                            title: 'fw-bold',
+                        }
+                    });
+                }
+            {% endfor %}
+        {% endif %}
+    });
+
     function loadHours(dateStr) {
         const modalElement = document.getElementById('hoursModal');
         const modal = new bootstrap.Modal(modalElement);
@@ -375,9 +395,8 @@
             });
     }
 
-    // --- NUEVO: FUNCIÓN PARA LA ALERTA DE INSTAGRAM ---
     function showInstagramAlert(event) {
-        event.preventDefault(); // Evita que la página salte
+        event.preventDefault(); 
         Swal.fire({
             title: '¡Muy pronto!',
             text: 'Estamos trabajando en nuestro Instagram para que veas los mejores cortes. 📸',
