@@ -219,6 +219,19 @@ def book_appointment(request, date_str, time_str):
     if request.method == 'POST':
         form = ClientBookingForm(request.POST)
         if form.is_valid():
+            # CANDADO DE SEGURIDAD 1: Verificar si alguien más ya tomó la cita
+            # Buscamos cualquier cita en esa fecha y hora que no esté cancelada
+            existe_cita = Appointment.objects.filter(
+                date=appointment_date, 
+                time=appointment_time
+            ).exclude(status='CANCELLED').exists()
+
+            if existe_cita:
+                # Si ya existe, mandamos el código de error para SweetAlert
+                messages.error(request, "ALGUIEN_FUE_MAS_RAPIDO")
+                return redirect('booking_calendar')
+
+            # Si el horario está libre, procedemos normalmente
             phone = form.cleaned_data['phone_number']
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
@@ -236,23 +249,21 @@ def book_appointment(request, date_str, time_str):
                 }
             )
 
+            # Actualizamos datos por si el cliente cambió algo (nombre, pin, etc)
             user.first_name = first_name
             user.last_name = last_name
             user.security_pin = pin 
             user.nickname = nickname 
             user.save()
 
-            appointment, created = Appointment.objects.get_or_create(
+            # Creamos la cita (aquí ya estamos seguros de que el espacio está libre)
+            Appointment.objects.create(
                 client=user,
                 date=appointment_date,
                 time=appointment_time,
-                defaults={'status': 'PENDING'}
+                status='PENDING'
             )
-
-            if created:
-                return redirect('booking_success')
-            else:
-                messages.error(request, "Ese horario ya fue reservado.")
+            return redirect('booking_success')
 
     else:
         form = ClientBookingForm()

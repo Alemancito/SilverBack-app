@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar Cita</title>
+    <title>Confirmar Cita | SilverBack</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
@@ -12,36 +12,11 @@
     
     <style>
         body { background-color: #f0f2f5; font-family: 'Poppins', sans-serif; }
-        
-        /* ESTILO PC */
-        .card-ticket { 
-            border: none; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-            overflow: hidden; 
-        }
-
-        .ticket-header { 
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
-            color: white; 
-            padding: 30px; 
-            text-align: center; 
-        }
-
-        .ticket-body { 
-            padding: 40px; 
-            background: white; 
-        }
-        
+        .card-ticket { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        .ticket-header { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 30px; text-align: center; }
+        .ticket-body { padding: 40px; background: white; }
         .iti { width: 100%; }
-        .iti__arrow { border: none; }
-
-        /* ESTILO MÓVIL */
-        @media (max-width: 768px) {
-            .ticket-header { padding: 25px 15px; }
-            .ticket-body { padding: 30px 20px; }
-            input, select, textarea { font-size: 16px !important; }
-        }
+        @media (max-width: 768px) { .ticket-header { padding: 25px 15px; } .ticket-body { padding: 30px 20px; } input, select, textarea { font-size: 16px !important; } }
     </style>
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
 </head>
@@ -64,12 +39,24 @@
                         {% for message in messages %}
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
-                                    Swal.fire({
-                                        icon: "{{ message.tags }}".includes('error') ? 'error' : 'info',
-                                        title: 'Información',
-                                        text: '{{ message }}',
-                                        confirmButtonColor: '#0d6efd'
-                                    });
+                                    if ("{{ message }}" === "ALGUIEN_FUE_MAS_RAPIDO") {
+                                        Swal.fire({
+                                            title: '¡Ups! Alguien fue más rápido ⚡',
+                                            text: 'Esa hora se acaba de reservar hace unos segundos mientras llenabas tus datos. Por favor, elige otro horario disponible.',
+                                            icon: 'warning',
+                                            confirmButtonColor: '#1e3c72',
+                                            confirmButtonText: 'Elegir otro horario'
+                                        }).then(() => {
+                                            window.location.href = "{% url 'booking_calendar' %}";
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            icon: "{{ message.tags }}".includes('error') ? 'error' : 'info',
+                                            title: 'Información',
+                                            text: '{{ message }}',
+                                            confirmButtonColor: '#0d6efd'
+                                        });
+                                    }
                                 });
                             </script>
                         {% endfor %}
@@ -77,16 +64,13 @@
 
                     <form method="POST" id="bookingForm" novalidate autocomplete="off">
                         {% csrf_token %}
-                        
                         <input type="text" style="display:none" name="fake_user_prevention">
                         <input type="password" style="display:none" name="fake_pass_prevention">
 
                         <div class="mb-4">
                             <label class="form-label fw-bold"><i class="bi bi-phone"></i> Tu Teléfono</label>
-                            
                             {{ form.phone_number }}
                             <input type="hidden" name="full_phone" id="full_phone">
-                            
                             <div class="form-text mt-2" id="phone_error" style="color: red; display: none;"></div>
                             <div class="form-text text-muted" style="font-size: 0.85rem;">
                                 <i class="bi bi-info-circle"></i> Elige tu bandera e ingresa tu numero de teléfono.
@@ -119,11 +103,13 @@
                                 <i class="bi bi-stars"></i> ¿Tienes un Apodo? (Opcional)
                             </label>
                             {{ form.nickname }}
-                            <div class="form-text small mt-2">"¿Cómo te dicen los amigos? Tu nombre completo solo lo usa tu mamá cuando se enoja"</div>
+                            <div class="form-text small mt-2">
+                                "Sabemos que tu mamá te dice 'Mi Rey', pero aquí dinos cómo te llaman tus amigos de verdad."
+                            </div>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg py-3 rounded-pill shadow-sm">
+                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg py-3 rounded-pill shadow-sm">
                                 Confirmar Reserva <i class="bi bi-check-circle-fill ms-2"></i>
                             </button>
                             <a href="{% url 'booking_calendar' %}" class="btn btn-outline-secondary btn-sm border-0">Cambiar fecha/hora</a>
@@ -143,16 +129,14 @@
     const firstNameInput = document.querySelector("#id_first_name");
     const lastNameInput = document.querySelector("#id_last_name");
     const pinInput = document.querySelector("#id_pin");
+    const submitBtn = document.querySelector("#submitBtn");
 
     // --- TRUCO ANTI-AUTOFILL ---
     if(pinInput) {
         pinInput.value = '';
         pinInput.setAttribute('readonly', true);
         pinInput.setAttribute('autocomplete', 'new-password');
-        
-        pinInput.addEventListener('focus', function() {
-            this.removeAttribute('readonly');
-        });
+        pinInput.addEventListener('focus', function() { this.removeAttribute('readonly'); });
     }
 
     const iti = window.intlTelInput(input, {
@@ -163,88 +147,34 @@
         autoPlaceholder: "aggressive", 
     });
 
-    input.addEventListener("keydown", function(e) {
-        const allowedKeys = [46, 8, 9, 27, 13, 110];
-        if (allowedKeys.indexOf(e.keyCode) !== -1 ||
-            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
-            (e.keyCode === 67 && (e.ctrlKey === true || e.metaKey === true)) || 
-            (e.keyCode === 86 && (e.ctrlKey === true || e.metaKey === true)) || 
-            (e.keyCode >= 35 && e.keyCode <= 40)) {
-                 return; 
-        }
-        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-            e.preventDefault(); 
-        }
-    });
-
-    input.addEventListener('blur', function() {
-        const currentNumber = iti.getNumber();
-        iti.setNumber(currentNumber);
-    });
-
     const form = document.getElementById('bookingForm');
     
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Validaciones
-        if (!firstNameInput.value.trim() || !lastNameInput.value.trim()) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Faltan datos',
-                text: 'Por favor, escribe tu Nombre y Apellido.',
-                confirmButtonColor: '#0d6efd'
-            });
+        if (!firstNameInput.value.trim() || !lastNameInput.value.trim() || !pinInput.value.trim() || !input.value.trim() || !iti.isValidNumber()) {
+            Swal.fire({ icon: 'warning', title: 'Datos incompletos', text: 'Por favor, revisa que todos los campos sean correctos.', confirmButtonColor: '#0d6efd' });
             return;
         }
 
-        if (!pinInput.value.trim() || pinInput.value.length < 4) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'PIN Incompleto',
-                text: 'Crea un PIN de 4 números por seguridad.',
-                confirmButtonColor: '#0d6efd'
-            });
-            return;
-        }
-
-        if (!input.value.trim()) {
-             Swal.fire({
-                icon: 'warning',
-                title: 'Teléfono vacío',
-                text: 'Necesitamos tu número para contactarte.',
-                confirmButtonColor: '#0d6efd'
-            });
-            return;
-        }
-
-        if (!iti.isValidNumber()) {
-             Swal.fire({
-                icon: 'error',
-                title: 'Número inválido',
-                text: 'El número de teléfono parece incorrecto.',
-                confirmButtonColor: '#0d6efd'
-            });
-            return;
-        }
+        // DESHABILITAR BOTÓN PARA EVITAR DOBLE CLIC
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Reservando... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
         const fullNumber = iti.getNumber();
         document.getElementById('full_phone').value = fullNumber;
 
         Swal.fire({
             title: 'Agendando cita...',
-            html: 'Estamos confirmando tu espacio.',
-            timerProgressBar: true,
-            didOpen: () => {
-                Swal.showLoading();
-            }
+            html: 'Estamos confirmando tu espacio en la barbería.',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => { Swal.showLoading(); }
         });
 
-        setTimeout(() => {
-            this.submit();
-        }, 2000); 
+        // Enviamos el formulario
+        this.submit();
     });
 </script>
-
 </body>
 </html>
