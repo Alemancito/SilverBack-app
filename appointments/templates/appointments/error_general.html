@@ -12,7 +12,6 @@
     <style>
         :root {
             --gold: #d4af37;
-            --gold-soft: rgba(212, 175, 55, 0.28);
             --dark: #1f1f1f;
             --gray: #6b6b6b;
         }
@@ -38,41 +37,20 @@
             padding: 40px 20px;
         }
 
-        /* ------------------ TÍTULO ------------------ */
+        /* ---------- TÍTULO ---------- */
         h1 {
             font-size: clamp(2.8rem, 6vw, 4.6rem);
             font-weight: 900;
-            margin: 0;
+            margin: 0 0 30px 0;
             letter-spacing: -1px;
-            background: linear-gradient(135deg, #f5d76e, #c49f27);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--gold);
             animation: fadeDown 0.8s ease forwards;
         }
 
-        h1::after {
-            content: "";
-            display: block;
-            width: 90px;
-            height: 5px;
-            margin: 18px auto 0;
-            border-radius: 5px;
-            background: linear-gradient(90deg, transparent, var(--gold), transparent);
-        }
-
-        /* ------------------ GIF ------------------ */
+        /* ---------- GIF ---------- */
         .gif-wrapper {
-            position: relative;
-            margin: 65px auto 45px;
+            margin: 40px auto 45px;
             animation: zoomFade 1s ease forwards;
-        }
-
-        .gif-wrapper::before {
-            content: "";
-            position: absolute;
-            inset: -45px;
-            background: radial-gradient(circle, var(--gold-soft), transparent 70%);
-            z-index: -1;
         }
 
         .gif-wrapper img {
@@ -82,7 +60,7 @@
             margin: auto;
         }
 
-        /* ------------------ TEXTO ------------------ */
+        /* ---------- TEXTO ---------- */
         .content {
             max-width: 640px;
             margin: auto;
@@ -96,9 +74,8 @@
             margin-bottom: 45px;
         }
 
-        /* ------------------ BOTÓN ------------------ */
+        /* ---------- BOTÓN ---------- */
         .btn {
-            position: relative;
             display: inline-block;
             padding: 18px 55px;
             border-radius: 50px;
@@ -110,27 +87,6 @@
             text-decoration: none;
             box-shadow: 0 15px 35px rgba(212, 175, 55, 0.45);
             transition: all 0.35s ease;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: -75%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255,255,255,0.7),
-                transparent
-            );
-            transform: skewX(-25deg);
-        }
-
-        .btn:hover::before {
-            animation: shine 0.9s ease;
         }
 
         .btn:hover {
@@ -138,7 +94,7 @@
             box-shadow: 0 25px 45px rgba(212, 175, 55, 0.65);
         }
 
-        /* ------------------ ANIMACIONES ------------------ */
+        /* ---------- ANIMACIONES ---------- */
         @keyframes fadeDown {
             from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -154,11 +110,7 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        @keyframes shine {
-            100% { left: 125%; }
-        }
-
-        /* ------------------ MOBILE ------------------ */
+        /* ---------- MOBILE ---------- */
         @media (max-width: 600px) {
             .content p {
                 font-size: 1.1rem;

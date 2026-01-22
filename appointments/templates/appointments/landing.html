@@ -20,6 +20,7 @@
             flex-direction: column;
             justify-content: center;
             overflow: hidden;
+            margin: 0;
         }
 
         .bg-pattern {
@@ -35,19 +36,20 @@
             padding: 20px;
             position: relative;
             z-index: 1;
-            /* Asegura que el contenido no se desborde en pantallas muy pequeñas */
             max-width: 100%;
             overflow-x: hidden;
         }
 
-        /* --- LOGO MODO BESTIA --- */
+        /* --- LOGO SIN CONTORNO --- */
         .brand-logo-img {
-            width: 750px; /* ¡TAMAÑO COLOSAL PARA PC! */
+            width: 750px; 
             max-width: 100%; 
             height: auto;
             margin-bottom: 5px;
-            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.6)); /* Sombra más intensa */
-            animation: float 5s ease-in-out infinite; /* Flotación lenta y pesada */
+            /* Se eliminó el filter drop-shadow para quitar el contorno dorado */
+            animation: float 5s ease-in-out infinite; 
+            border: none !important;
+            outline: none !important;
         }
 
         .brand-title {
@@ -134,10 +136,8 @@
             100% { transform: translateY(0px); }
         }
 
-        /* --- AJUSTES MÓVIL IMPONENTE --- */
         @media (max-width: 768px) {
             .brand-title { font-size: 2.8rem; }
-            /* En celular ocupa casi toda la pantalla a lo ancho */
             .brand-logo-img { width: 95%; max-width: none; } 
             .hero-container { padding-left: 10px; padding-right: 10px; }
         }
@@ -169,7 +169,7 @@
     </div>
 
     <div class="footer">
-        © 2026 Silver Back. Nueva Guadalupe, El Salvador.
+        <p class="mb-0">&copy; 2026 SilverBack Peluquería. Todos los derechos reservados.</p>
         <a href="{% url 'barber_login' %}" class="barber-access" title="Acceso Personal">
             <i class="bi bi-lock-fill"></i>
         </a>
