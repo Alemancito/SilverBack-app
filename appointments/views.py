@@ -471,3 +471,9 @@ def update_schedule(request, schedule_id):
         messages.error(request, 'Error en el formato de hora.')
 
     return redirect('barber_settings')
+
+def handler404(request, exception):
+    return render(request, 'appointments/error_general.html', status=404)
+
+def handler500(request):
+    return render(request, 'appointments/error_general.html', status=500)

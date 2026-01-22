@@ -21,3 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('appointments.urls')), # <--- Esto conecta nuestras rutas
 ]
+
+handler404 = 'appointments.views.handler404'
+handler500 = 'appointments.views.handler500'

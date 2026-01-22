@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Ups! Algo salió mal - SilverBack</title>
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+    <style>
+        body { 
+            background: #1a1a1a; /* Fondo oscuro elegante */
+            color: #f0f0f0;      /* Texto claro */
+            font-family: sans-serif; 
+            text-align: center; 
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh; /* Para centrar verticalmente en la pantalla */
+        }
+        
+        /* Estilo para el GIF del cavernícola */
+        .error-gif {
+            max-width: 100%;     /* Que no se salga en celulares */
+            width: 400px;        /* Tamaño ideal para escritorio */
+            height: auto;        /* Mantiene las proporciones */
+            border-radius: 15px; /* Bordes redondeados para que se vea moderno */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* Sombra para darle profundidad */
+            margin-bottom: 30px; /* Espacio debajo de la imagen */
+        }
+
+        h1 { 
+            color: #d4af37; /* Dorado SilverBack */
+            margin-top: 0;
+            font-size: 2em;
+        }
+        
+        p {
+            font-size: 1.1em;
+            color: #cccccc;
+            max-width: 600px; /* Para que el texto no sea muy ancho */
+            margin-bottom: 25px;
+        }
+
+        /* Botón de reinicio estilo SilverBack */
+        .btn-reset { 
+            background: #d4af37; 
+            color: #1a1a1a; 
+            padding: 12px 30px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 1em;
+            transition: background 0.3s ease; /* Animación suave al pasar el mouse */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-reset:hover {
+            background: #b3932b; /* Un dorado más oscuro al pasar el mouse */
+        }
+
+        .back-link {
+            margin-top: 25px;
+            display: inline-block;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .back-link:hover {
+            color: #d4af37;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <img src="{% static 'img/error_cable.gif' %}" alt="Cavernícola mordiendo cable" class="error-gif">
+
+    <h1>¡RAYOS Y CENTELLAS! ⚡</h1>
+    
+    <p>Parece que nuestro cavernícola de IT mordió el cable equivocado y perdimos la conexión momentáneamente.</p>
+    <p>No te preocupes, suele arreglarse solo con un pequeño empujón.</p>
+
+    <button class="btn-reset" onclick="location.reload()">🔄 Intentar de nuevo</button>
+    
+    <br>
+    <a href="/" class="back-link">Volver a la página principal</a>
+</body>
+</html>
