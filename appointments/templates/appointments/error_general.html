@@ -5,163 +5,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¡Ups! - SilverBack Barber</title>
+
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
-    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --gold-primary: #d4af37;
-            --gold-secondary: #fceabb; /* Un tono más claro para el degradado */
-            --dark-text: #222222;
-            --light-text: #666666;
+            --gold: #d4af37;
+            --gold-soft: rgba(212, 175, 55, 0.28);
+            --dark: #1f1f1f;
+            --gray: #6b6b6b;
         }
 
-        body { 
-            background: #ffffff; /* Fondo BLANCO puro para el GIF */
-            color: var(--dark-text);
-            font-family: 'Montserrat', sans-serif; /* Fuente moderna */
-            text-align: center; 
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        * {
             box-sizing: border-box;
         }
 
-        /* Contenedor principal para limitar el ancho */
-        .error-container {
-            max-width: 900px;
-            width: 100%;
-        }
-        
-        /* 1. TÍTULO ARRIBA */
-        .main-title { 
-            color: var(--gold-primary);
-            margin: 0 0 10px 0;
-            font-size: clamp(2.5rem, 5vw, 4rem); /* Tamaño dinámico según la pantalla */
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            line-height: 1.1;
-             /* Animación de entrada */
-            animation: fadeUp 0.8s ease-out both;
-        }
-        
-        /* 2. GIF GIGANTE CENTRADO */
-        .error-gif-wrapper {
-            margin: 30px auto;
-            width: 100%;
-            /* Animación de entrada con un poco de retraso */
-            animation: fadeIn 1s ease-out 0.3s both;
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #ffffff;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
-        .error-gif {
-            box-shadow: none;
-            border-radius: 0;
-            max-width: 100%;
-            width: 750px; /* Tamaño base muy generoso */
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            padding: 40px 20px;
+        }
+
+        /* ------------------ TÍTULO ------------------ */
+        h1 {
+            font-size: clamp(2.8rem, 6vw, 4.6rem);
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #f5d76e, #c49f27);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeDown 0.8s ease forwards;
+        }
+
+        h1::after {
+            content: "";
+            display: block;
+            width: 90px;
+            height: 5px;
+            margin: 18px auto 0;
+            border-radius: 5px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        /* ------------------ GIF ------------------ */
+        .gif-wrapper {
+            position: relative;
+            margin: 65px auto 45px;
+            animation: zoomFade 1s ease forwards;
+        }
+
+        .gif-wrapper::before {
+            content: "";
+            position: absolute;
+            inset: -45px;
+            background: radial-gradient(circle, var(--gold-soft), transparent 70%);
+            z-index: -1;
+        }
+
+        .gif-wrapper img {
+            width: min(850px, 95%);
             height: auto;
             display: block;
-            margin: 0 auto;
-            /* Un pequeño truco para asegurar que los bordes blancos del gif se mezclen */
-            mix-blend-mode: multiply; 
+            margin: auto;
         }
 
-        /* 3. TEXTO Y BOTONES ABAJO */
-        .content-box {
-            max-width: 600px;
-            margin: 0 auto;
-            /* Animación de entrada deslizándose */
-            animation: fadeUp 0.8s ease-out 0.5s both;
-        }
-        
-        .description {
-            font-size: 1.3em;
-            color: var(--light-text);
-            margin-bottom: 35px;
-            line-height: 1.6;
-            font-weight: 400;
+        /* ------------------ TEXTO ------------------ */
+        .content {
+            max-width: 640px;
+            margin: auto;
+            animation: fadeUp 1s ease forwards;
         }
 
-        /* BOTÓN MODERNO Y PREMIUM */
-        .btn-modern { 
+        .content p {
+            font-size: 1.25rem;
+            line-height: 1.7;
+            color: var(--gray);
+            margin-bottom: 45px;
+        }
+
+        /* ------------------ BOTÓN ------------------ */
+        .btn {
+            position: relative;
             display: inline-block;
-            text-decoration: none;
-            /* Degradado dorado moderno */
-            background: linear-gradient(135deg, var(--gold-primary) 0%, #c49f27 100%);
-            color: #000000; 
-            padding: 18px 50px; 
-            border: none; 
-            border-radius: 50px; /* Forma de pastilla */
+            padding: 18px 55px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #f5d76e, #c49f27);
+            color: #000;
             font-weight: 800;
-            font-size: 1.1em;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            /* Sombra dorada luminosa */
-            box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.5);
-            position: relative;
+            text-decoration: none;
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.45);
+            transition: all 0.35s ease;
             overflow: hidden;
         }
 
-        /* Efecto al pasar el mouse */
-        .btn-modern:hover {
-            transform: translateY(-5px) scale(1.02); /* Se eleva y crece un poco */
-            box-shadow: 0 20px 35px -10px rgba(212, 175, 55, 0.7);
-            background: linear-gradient(135deg, #e6c356 0%, var(--gold-primary) 100%);
-        }
-        
-        /* Efecto al hacer click */
-        .btn-modern:active {
-            transform: translateY(2px) scale(0.98);
-            box-shadow: 0 5px 15px -5px rgba(212, 175, 55, 0.4);
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -75%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255,255,255,0.7),
+                transparent
+            );
+            transform: skewX(-25deg);
         }
 
-        /* DEFINICIÓN DE ANIMACIONES */
+        .btn:hover::before {
+            animation: shine 0.9s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 45px rgba(212, 175, 55, 0.65);
+        }
+
+        /* ------------------ ANIMACIONES ------------------ */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Ajustes para móviles */
+        @keyframes zoomFade {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes shine {
+            100% { left: 125%; }
+        }
+
+        /* ------------------ MOBILE ------------------ */
         @media (max-width: 600px) {
-            .description { font-size: 1.1em; }
-            .btn-modern { padding: 15px 35px; width: 80%; }
+            .content p {
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                width: 85%;
+                padding: 16px 30px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="error-container">
-        <h1 class="main-title ">¡RAYOS Y CENTELLAS!</h1>
 
-        <div class="error-gif-wrapper">
-            <img src="{% static 'img/error_cable.gif' %}" alt="Cavernícola mordiendo cable" class="error-gif">
+    <div class="container">
+
+        <h1>¡RAYOS Y CENTELLAS!</h1>
+
+        <div class="gif-wrapper">
+            <img src="{% static 'img/error_cable.gif' %}" alt="Cavernícola mordiendo cable">
         </div>
 
-        <div class="content-box">
-            <p class="description">
-                Parece que nuestro cavernícola de IT mordió el cable equivocado y la conexión hizo ¡PUF!
-                <br>No te preocupes, ya le quitamos el cable.
+        <div class="content">
+            <p>
+                Parece que nuestro cavernícola de IT mordió el cable equivocado
+                y la conexión hizo <strong>¡PUF!</strong><br>
+                No te preocupes, ya le quitamos el cable.
             </p>
 
-            <a href="/" class="btn-modern">
-                VOLVER AL INICIO
-            </a>
+            <a href="/" class="btn">VOLVER AL INICIO</a>
         </div>
+
     </div>
+
 </body>
 </html>
