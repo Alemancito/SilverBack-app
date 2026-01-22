@@ -75,8 +75,8 @@
                                 <i class="bi bi-stars"></i> ¿Tienes un Apodo? (Opcional)
                             </label>
                             {{ form.nickname }}
-                            <div class="form-text small mt-2">
-                                "¿Cómo te llaman tus amigos?, tu nombre completo solo lo usa tu mamá cuando esta enojada"
+                            <div class="form-text small mt-2" style="font-style: italic;">
+                                "Sabemos que tu mamá te dice 'Mi Rey', pero aquí dinos cómo te llaman tus amigos de verdad."
                             </div>
                         </div>
 
@@ -103,6 +103,7 @@
     const pinInput = document.querySelector("#id_pin");
     const submitBtn = document.querySelector("#submitBtn");
 
+    // Truco para evitar que el navegador auto-rellene el PIN
     if(pinInput) {
         pinInput.value = '';
         pinInput.setAttribute('readonly', true);
@@ -123,29 +124,41 @@
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Validaciones básicas
+        // Validaciones básicas de campos vacíos
         if (!firstNameInput.value.trim() || !lastNameInput.value.trim() || !pinInput.value.trim() || !input.value.trim() || !iti.isValidNumber()) {
-            Swal.fire({ icon: 'warning', title: 'Datos incompletos', text: 'Por favor, revisa que todos los campos sean correctos.', confirmButtonColor: '#0d6efd' });
+            Swal.fire({ 
+                icon: 'warning', 
+                title: 'Datos incompletos', 
+                text: 'Por favor, revisa que todos los campos sean correctos.', 
+                confirmButtonColor: '#1e3c72' 
+            });
             return;
         }
 
-        // BLOQUEO DE DOBLE CLIC
+        // 1. BLOQUEO VISUAL DEL BOTÓN
         submitBtn.disabled = true;
         submitBtn.innerHTML = 'Agendando... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
 
         const fullNumber = iti.getNumber();
         document.getElementById('full_phone').value = fullNumber;
 
-        // Mostrar cargando mientras Railway procesa
+        // 2. MOSTRAR SWEETALERT DE CARGA (El toque profesional)
         Swal.fire({
-            title: 'Confirmando espacio...',
-            text: 'Verificando disponibilidad en tiempo real.',
+            title: 'Agendando tu cita...',
+            html: 'Estamos confirmando tu espacio en <b>SilverBack</b>.',
+            timer: 2000,
+            timerProgressBar: true,
             allowOutsideClick: false,
             showConfirmButton: false,
-            didOpen: () => { Swal.showLoading(); }
+            didOpen: () => {
+                Swal.showLoading();
+            }
         });
 
-        this.submit();
+        // 3. EL RETRASO DE 2 SEGUNDOS PARA DAR SENSACIÓN DE PROCESAMIENTO
+        setTimeout(() => {
+            this.submit();
+        }, 2000);
     });
 </script>
 </body>
