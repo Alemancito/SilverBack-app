@@ -12,7 +12,6 @@
     <style>
         :root {
             --gold: #d4af37;
-            --dark: #1f1f1f;
             --gray: #6b6b6b;
         }
 
@@ -22,39 +21,42 @@
 
         body {
             margin: 0;
-            min-height: 100vh;
+            height: 100vh;
             background: #ffffff;
             font-family: 'Montserrat', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+            overflow: hidden; /* 🔑 evita scrollbar */
         }
 
         .container {
             max-width: 1100px;
             width: 100%;
-            padding: 40px 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         /* ---------- TÍTULO ---------- */
         h1 {
-            font-size: clamp(2.8rem, 6vw, 4.6rem);
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 900;
-            margin: 0 0 30px 0;
+            margin: 0 0 20px 0;
             letter-spacing: -1px;
             color: var(--gold);
-            animation: fadeDown 0.8s ease forwards;
         }
 
         /* ---------- GIF ---------- */
         .gif-wrapper {
-            margin: 40px auto 45px;
-            animation: zoomFade 1s ease forwards;
+            margin: 10px 0 20px;
         }
 
         .gif-wrapper img {
-            width: min(850px, 95%);
+            width: min(720px, 90%);
             height: auto;
             display: block;
             margin: auto;
@@ -62,22 +64,20 @@
 
         /* ---------- TEXTO ---------- */
         .content {
-            max-width: 640px;
-            margin: auto;
-            animation: fadeUp 1s ease forwards;
+            max-width: 620px;
         }
 
         .content p {
-            font-size: 1.25rem;
-            line-height: 1.7;
+            font-size: 1.15rem;
+            line-height: 1.6;
             color: var(--gray);
-            margin-bottom: 45px;
+            margin: 0 0 25px;
         }
 
         /* ---------- BOTÓN ---------- */
         .btn {
             display: inline-block;
-            padding: 18px 55px;
+            padding: 16px 48px;
             border-radius: 50px;
             background: linear-gradient(135deg, #f5d76e, #c49f27);
             color: #000;
@@ -85,40 +85,33 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             text-decoration: none;
-            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.45);
-            transition: all 0.35s ease;
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.45);
+            transition: all 0.3s ease;
         }
 
         .btn:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 25px 45px rgba(212, 175, 55, 0.65);
-        }
-
-        /* ---------- ANIMACIONES ---------- */
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes zoomFade {
-            from { opacity: 0; transform: scale(0.96); }
-            to { opacity: 1; transform: scale(1); }
+            transform: translateY(-4px);
+            box-shadow: 0 18px 40px rgba(212, 175, 55, 0.6);
         }
 
         /* ---------- MOBILE ---------- */
         @media (max-width: 600px) {
+            h1 {
+                font-size: 2.2rem;
+                margin-bottom: 15px;
+            }
+
+            .gif-wrapper img {
+                width: 95%;
+            }
+
             .content p {
-                font-size: 1.1rem;
+                font-size: 1rem;
+                margin-bottom: 20px;
             }
 
             .btn {
-                width: 85%;
-                padding: 16px 30px;
+                padding: 14px 36px;
             }
         }
     </style>
