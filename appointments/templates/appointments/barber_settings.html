@@ -32,16 +32,10 @@
         
         .time-input, .note-input {
             background-color: #2c2c2c; border: 1px solid #444; color: white;
-            border-radius: 8px; padding: 10px; width: 100%; box-sizing: border-box;
+            border-radius: 8px; padding: 10px; width: 100%; 
         }
         .time-input { text-align: center; font-size: 1.1rem; font-weight: 600; }
         .note-input { font-size: 0.95rem; }
-        
-        /* Ajuste específico para que en iOS el icono del reloj no rompa el diseño */
-        input[type="time"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            margin-left: 5px;
-        }
         
         .time-input:focus, .note-input:focus { border-color: #d4af37; outline: none; background-color: #333; }
         
@@ -52,10 +46,11 @@
         
         .section-label { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; }
         
+        /* BOTÓN OCULTO POR DEFECTO */
         .btn-save { 
             background-color: #d4af37; color: #000; border: none; width: 100%; 
             padding: 12px; border-radius: 10px; font-weight: 700; margin-top: 15px;
-            display: none; 
+            display: none; /* <--- EL SECRETO: INVISIBLE AL INICIO */
             animation: fadeIn 0.5s;
         }
         
@@ -116,13 +111,13 @@
                     <hr class="border-secondary opacity-25 my-3">
                     
                     <div class="row g-3">
-                        <div class="col-12 col-sm-6">
+                        <div class="col-6">
                             <label class="section-label"><i class="bi bi-sunrise me-1"></i> Abre</label>
                             <input type="time" name="start_time" class="time-input" 
                                    value="{{ day.start_time|time:'H:i' }}"
                                    oninput="detectChange('{{ day.id }}')">
                         </div>
-                        <div class="col-12 col-sm-6">
+                        <div class="col-6">
                             <label class="section-label"><i class="bi bi-sunset-fill me-1"></i> Cierra</label>
                             <input type="time" name="end_time" class="time-input" 
                                    value="{{ day.end_time|time:'H:i' }}"
@@ -178,15 +173,21 @@
     </div>
 
     <script>
+        // --- 1. Detector de Cambios (Hace aparecer el botón) ---
         function detectChange(id) {
+            // Buscamos los dos posibles botones de esa tarjeta
             const btnOpen = document.getElementById('btn-save-open-' + id);
             const btnClosed = document.getElementById('btn-save-closed-' + id);
+            
+            // Los hacemos visibles
             if (btnOpen) btnOpen.style.display = 'block';
             if (btnClosed) btnClosed.style.display = 'block';
         }
 
+        // --- 2. Lógica de Switches ---
         function toggleDay(id) {
             const isChecked = document.getElementById('work-' + id).checked;
+            
             const openSettings = document.getElementById('open-settings-' + id);
             const closedSettings = document.getElementById('closed-settings-' + id);
             const card = document.getElementById('card-' + id);
@@ -212,6 +213,7 @@
             document.getElementById('lunch-time-' + id).style.display = isChecked ? 'block' : 'none';
         }
 
+        // --- 3. SweetAlert ---
         document.addEventListener('DOMContentLoaded', function() {
             {% if messages %}
                 {% for message in messages %}
