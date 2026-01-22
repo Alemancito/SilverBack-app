@@ -4,112 +4,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Ups! Algo salió mal - SilverBack</title>
+    <title>¡Ups! - SilverBack Barber</title>
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --gold-primary: #d4af37;
+            --gold-secondary: #fceabb; /* Un tono más claro para el degradado */
+            --dark-text: #222222;
+            --light-text: #666666;
+        }
+
         body { 
-            background: #ffffff; /* Fondo BLANCO puro para fusionar el GIF */
-            color: #333333;      /* Texto oscuro para contraste */
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            background: #ffffff; /* Fondo BLANCO puro para el GIF */
+            color: var(--dark-text);
+            font-family: 'Montserrat', sans-serif; /* Fuente moderna */
             text-align: center; 
+            margin: 0;
             padding: 20px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 95vh; /* Ocupa toda la altura de la pantalla */
-            margin: 0;
+            box-sizing: border-box;
+        }
+
+        /* Contenedor principal para limitar el ancho */
+        .error-container {
+            max-width: 900px;
+            width: 100%;
         }
         
-        h1 { 
-            color: #d4af37; /* Dorado SilverBack, resalta sobre blanco */
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 2.5em; /* Título grande e imponente */
-            font-weight: 800;
+        /* 1. TÍTULO ARRIBA */
+        .main-title { 
+            color: var(--gold-primary);
+            margin: 0 0 10px 0;
+            font-size: clamp(2.5rem, 5vw, 4rem); /* Tamaño dinámico según la pantalla */
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+             /* Animación de entrada */
+            animation: fadeUp 0.8s ease-out both;
         }
         
-        /* Estilo para el GIF gigante */
+        /* 2. GIF GIGANTE CENTRADO */
+        .error-gif-wrapper {
+            margin: 30px auto;
+            width: 100%;
+            /* Animación de entrada con un poco de retraso */
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
         .error-gif {
-            /* Quitamos bordes y sombras para que parezca parte del fondo */
             box-shadow: none;
             border-radius: 0;
-            
-            /* Lo hacemos MUCHO más grande */
-            max-width: 95%;      /* Que casi toque los bordes en celulares */
-            width: 700px;        /* Un tamaño base muy generoso en escritorio */
-            height: auto;        /* Mantiene la proporción */
-            
-            display: block;      /* Asegura que se centre bien */
-            margin: 20px auto;   /* Espacio arriba y abajo */
+            max-width: 100%;
+            width: 750px; /* Tamaño base muy generoso */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            /* Un pequeño truco para asegurar que los bordes blancos del gif se mezclen */
+            mix-blend-mode: multiply; 
         }
 
-        .message-container {
+        /* 3. TEXTO Y BOTONES ABAJO */
+        .content-box {
             max-width: 600px;
-            margin: 0 auto 30px auto;
+            margin: 0 auto;
+            /* Animación de entrada deslizándose */
+            animation: fadeUp 0.8s ease-out 0.5s both;
         }
         
-        p {
-            font-size: 1.2em;
-            color: #555555; /* Gris oscuro para el texto secundario */
-            margin-bottom: 15px;
-            line-height: 1.5;
+        .description {
+            font-size: 1.3em;
+            color: var(--light-text);
+            margin-bottom: 35px;
+            line-height: 1.6;
+            font-weight: 400;
         }
 
-        /* Botón de reinicio estilo SilverBack */
-        .btn-reset { 
-            background: #d4af37; 
-            color: #000000; 
-            padding: 15px 40px; 
-            border: none; 
-            border-radius: 50px; /* Bordes muy redondeados estilo moderno */
-            cursor: pointer; 
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); /* Sombra dorada suave */
-        }
-
-        .btn-reset:hover {
-            background: #b3932b; 
-            transform: translateY(-2px); /* Pequeño efecto de elevación */
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
-        }
-        
-        .btn-reset:active {
-            transform: translateY(1px);
-        }
-
-        .back-link {
-            margin-top: 30px;
+        /* BOTÓN MODERNO Y PREMIUM */
+        .btn-modern { 
             display: inline-block;
-            color: #888;
             text-decoration: none;
-            font-size: 0.95em;
-            font-weight: 500;
-            transition: color 0.2s;
+            /* Degradado dorado moderno */
+            background: linear-gradient(135deg, var(--gold-primary) 0%, #c49f27 100%);
+            color: #000000; 
+            padding: 18px 50px; 
+            border: none; 
+            border-radius: 50px; /* Forma de pastilla */
+            font-weight: 800;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* Sombra dorada luminosa */
+            box-shadow: 0 10px 25px -5px rgba(212, 175, 55, 0.5);
+            position: relative;
+            overflow: hidden;
         }
-        .back-link:hover {
-            color: #d4af37;
+
+        /* Efecto al pasar el mouse */
+        .btn-modern:hover {
+            transform: translateY(-5px) scale(1.02); /* Se eleva y crece un poco */
+            box-shadow: 0 20px 35px -10px rgba(212, 175, 55, 0.7);
+            background: linear-gradient(135deg, #e6c356 0%, var(--gold-primary) 100%);
+        }
+        
+        /* Efecto al hacer click */
+        .btn-modern:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 5px 15px -5px rgba(212, 175, 55, 0.4);
+        }
+
+        /* DEFINICIÓN DE ANIMACIONES */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Ajustes para móviles */
+        @media (max-width: 600px) {
+            .description { font-size: 1.1em; }
+            .btn-modern { padding: 15px 35px; width: 80%; }
         }
     </style>
 </head>
 <body>
-    <h1>¡RAYOS Y CENTELLAS! ⚡</h1>
+    <div class="error-container">
+        <h1 class="main-title">¡RAYOS Y CENTELLAS! ⚡</h1>
 
-    <img src="{% static 'img/error_cable.gif' %}" alt="Cavernícola mordiendo cable" class="error-gif">
+        <div class="error-gif-wrapper">
+            <img src="{% static 'img/error_cable.gif' %}" alt="Cavernícola mordiendo cable" class="error-gif">
+        </div>
 
-    <div class="message-container">
-        <p>Parece que nuestro cavernícola de IT mordió el cable equivocado y perdimos la conexión momentáneamente.</p>
-        <p>No te preocupes, suele arreglarse solo con un pequeño empujón.</p>
+        <div class="content-box">
+            <p class="description">
+                Parece que nuestro cavernícola de IT mordió el cable equivocado y la conexión hizo ¡PUF!
+                <br>No te preocupes, ya le quitamos el cable.
+            </p>
+
+            <a href="/" class="btn-modern">
+                VOLVER AL INICIO
+            </a>
+        </div>
     </div>
-
-    <button class="btn-reset" onclick="location.reload()">🔄 Intentar de nuevo</button>
-    
-    <br>
-    <a href="/" class="back-link">Volver a la página principal</a>
 </body>
 </html>
